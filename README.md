@@ -1,12 +1,12 @@
 # OpenEvals Local RAG
 
-This repo contains an implementation of effective Retrieval-Augmented Generation (RAG) over web search results using a small, local LLM (Qwen-2.5 7b) through [Ollama](https://ollama.com) and [Tavily](https://tavily.com/)'s search engine tool.
+This repo contains an implementation of effective Retrieval-Augmented Generation (RAG) over web search results using a small, fast, local LLM (Qwen-2.5 7b) through [Ollama](https://ollama.com) and [Tavily](https://tavily.com/)'s search engine tool.
 
 It shows off the use of [OpenEvals](https://github.com/langchain-ai/openevals) RAG evaluators "in-the-loop" as part of the agent. Compared to a naive approach of stuffing all web results back into LLM context, this improves performance in two ways:
 
 - A [corrective RAG](https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_crag/)-inspired approach of grading and filtering retrieved search results for relevancy.
   - This reduces the amount of distracting information the small LLM has to deal with when generating a final response.
-- A final `helpfulness` evaluator run as a reflection step over generated answers. If an answer is not deemed helpful in answering the original question, the LLM is reprompted to try again.
+- A final `helpfulness` evaluator run as a reflection step over generated answers. If an answer is not deemed helpful in answering the original question (stored in the `store_original_question` step in the diagram below), the LLM is reprompted to try again.
   - This ensures that the small LLM hasn't lost track of its original goal, which can happen if retrieval returns many relevant results.
 
 ![](/static/img/corrective_rag.png)
@@ -77,7 +77,7 @@ Once Studio loads, you can try both the simpler `react_agent` and the improved `
 
 ![](/static/img/studio_toggle.png)
 
-Now try a few queries like `What record did the Warriors have last year?` or `What is the current valuation of Google?` and see how the results differ!
+Now try a few queries like `What record did the Warriors have last year?` or `What do modern historians say about the fall of the Roman Empire?` and see how the results differ!
 
 ## Thank you!
 
