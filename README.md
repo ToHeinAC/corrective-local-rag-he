@@ -1,4 +1,4 @@
-# Corective Local RAG with Qwen 2.5
+# ✍️ Corrective Local RAG with Qwen 2.5
 
 This repo contains an implementation of effective Retrieval-Augmented Generation (RAG) over web search results using a small, fast, and local LLM (Qwen-2.5 7b) through [Ollama](https://ollama.com) and [Tavily](https://tavily.com/)'s search engine tool.
 
