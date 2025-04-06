@@ -1,5 +1,3 @@
-import json
-import asyncio
 from datetime import datetime
 
 from langchain.chat_models import init_chat_model
@@ -9,7 +7,6 @@ from langchain_core.tools import tool
 
 from openevals.llm import create_async_llm_as_judge
 from openevals.prompts import (
-    RAG_RETRIEVAL_RELEVANCE_PROMPT,
     RAG_HELPFULNESS_PROMPT,
 )
 
@@ -24,12 +21,6 @@ class GraphState(MessagesState):
     original_question: str
     attempted_search_queries: list[str]
 
-
-relevance_evaluator = create_async_llm_as_judge(
-    judge=model,
-    prompt=RAG_RETRIEVAL_RELEVANCE_PROMPT + f"\n\nThe current date is {current_date}.",
-    feedback_key="retrieval_relevance",
-)
 
 helpfulness_evaluator = create_async_llm_as_judge(
     judge=model,
@@ -52,37 +43,6 @@ async def search_tool(query: str):
 
 
 model_with_tools = model.bind_tools([search_tool])
-
-
-async def relevance_filter(state: GraphState):
-    last_message = state["messages"][-1]
-    if last_message.type == "tool" and last_message.name == search_tool.name:
-        search_results = json.loads(last_message.content).get("results", [])
-        filtered_results = []
-
-        # Create a semaphore to limit concurrent tasks to 2
-        semaphore = asyncio.Semaphore(2)
-
-        async def evaluate_with_semaphore(result):
-            async with semaphore:
-                eval_result = await relevance_evaluator(
-                    inputs=state["attempted_search_queries"][-1], context=result
-                )
-                return result, eval_result
-
-        # Create tasks for all results
-        tasks = [evaluate_with_semaphore(result) for result in search_results]
-
-        # Process tasks as they complete
-        for completed_task in asyncio.as_completed(tasks):
-            result, eval_result = await completed_task
-            if eval_result["score"]:
-                filtered_results.append(result)
-
-        last_message.content = json.dumps({"results": filtered_results})
-        return {"messages": [last_message]}
-    else:
-        raise Exception(f"Relevance filter node must be called after web search")
 
 
 async def should_continue(state: GraphState):
@@ -173,14 +133,12 @@ workflow.add_node(
 )
 workflow.add_node("agent", call_model)
 workflow.add_node("web_search", web_search)
-workflow.add_node("relevance_filter", relevance_filter)
 workflow.add_node("reflect", reflect)
 
 workflow.add_edge(START, "store_original_question")
 workflow.add_edge("store_original_question", "agent")
 workflow.add_conditional_edges("agent", should_continue, ["web_search", "reflect", END])
-workflow.add_edge("web_search", "relevance_filter")
-workflow.add_edge("relevance_filter", "agent")
+workflow.add_edge("web_search", "agent")
 workflow.add_conditional_edges(
     "reflect",
     retry_or_end,

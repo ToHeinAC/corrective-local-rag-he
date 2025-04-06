@@ -3,8 +3,9 @@
     "openevals_local_rag"
   ],
   "graphs": {
-    "simple_react_agent": "./openevals_local_rag/react_agent.py:agent",
-    "corrective_rag_agent": "./openevals_local_rag/corrective_rag_agent.py:agent"
+    "corrective_rag_agent": "./openevals_local_rag/corrective_rag_agent.py:agent",
+    "reflection_only": "./openevals_local_rag/reflection_only.py:agent",
+    "simple_react_agent": "./openevals_local_rag/react_agent.py:agent"
   },
   "env": "./.env"
 }

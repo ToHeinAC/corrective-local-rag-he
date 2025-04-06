@@ -1,12 +1,12 @@
-# OpenEvals Local RAG
+# Corective Local RAG with Qwen 2.5
 
-This repo contains an implementation of effective Retrieval-Augmented Generation (RAG) over web search results using a small, fast, local LLM (Qwen-2.5 7b) through [Ollama](https://ollama.com) and [Tavily](https://tavily.com/)'s search engine tool.
+This repo contains an implementation of effective Retrieval-Augmented Generation (RAG) over web search results using a small, fast, and local LLM (Qwen-2.5 7b) through [Ollama](https://ollama.com) and [Tavily](https://tavily.com/)'s search engine tool.
 
-It shows off the use of [OpenEvals](https://github.com/langchain-ai/openevals) RAG evaluators "in-the-loop" as part of the agent. Compared to a naive approach of stuffing all web results back into LLM context, this improves performance in two ways:
+It shows off the use of [OpenEvals](https://github.com/langchain-ai/openevals) RAG evaluators "in-the-loop" as part of the agent. Compared to a naive approach of stuffing all web results back into LLM context, this repo improves performance in two ways:
 
 - A [corrective RAG](https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_crag/)-inspired approach of grading and filtering retrieved search results for relevancy.
   - This reduces the amount of distracting information the small LLM has to deal with when generating a final response.
-- A final `helpfulness` evaluator run as a reflection step over generated answers. If an answer is not deemed helpful in answering the original question (stored in the `store_original_question` step in the diagram below), the LLM is reprompted to try again.
+- A final `helpfulness` evaluator run as a reflection step over generated answers. If an answer is not deemed helpful in answering the original question (stored in the `store_original_question` step in the diagram below), the LLM is reprompted via a reflection step to try again.
   - This ensures that the small LLM hasn't lost track of its original goal, which can happen if retrieval returns many relevant results.
 
 ![](/static/img/corrective_rag.png)
@@ -15,6 +15,8 @@ The thought behind running evaluators as part of your agent is to proactively at
 
 - [Using basic ReAct architecture](https://smith.langchain.com/public/b4dbe71f-062f-4a19-a11b-096cefcb630c/r), the LLM presents a rambling answer about historical records while omitting the relevant year.
 - [Using the enhanced architecture](https://smith.langchain.com/public/c301728d-0b20-4d1d-8601-9c02727930bb/r), the LLM remains focused and correctly uses retrieved results to generate a correct answer.
+
+This repo also includes a version of the agent that omits the retrieval filtering step that relies purely on reflection and the `helpfulness` evaluator.
 
 ## Getting started
 
@@ -38,7 +40,14 @@ Your `.env` file should look like this
 
 ```
 TAVILY_API_KEY=YOUR_KEY_HERE
+
+# Optional
+# Set up LangSmith tracing
+# LANGSMITH_API_KEY=YOUR_KEY_HERE
+# LANGSMITH_TRACING=true
 ```
+
+You can also set up LangSmith tracing if desired.
 
 3. Install Ollama
 
@@ -61,10 +70,6 @@ uv sync
 # pip install
 ```
 
-5. (Optional) Sign up for LangSmith
-
-If you want to run this project using LangGraph Studio, you will need to sign up for [LangSmith](https://smith.langchain.com). Otherwise, you will need to run the included agents by importing them as modules.
-
 6. Run your agent
 
 You can now run your agent using the following command:
@@ -78,6 +83,8 @@ Once Studio loads, you can try both the simpler `react_agent` and the improved `
 ![](/static/img/studio_toggle.png)
 
 Now try a few queries like `What record did the Warriors have last year?` or `What do modern historians say about the fall of the Roman Empire?` and see how the results differ!
+
+If you do not want to run this project using LangGraph Studio, you will need to run the included agents by importing them as modules.
 
 ## Thank you!
 

@@ -8,7 +8,8 @@ from langchain_core.tools import tool
 from openevals.llm import create_llm_as_judge
 from openevals.prompts import RAG_RETRIEVAL_RELEVANCE_PROMPT
 
-llm = init_chat_model("ollama:qwen2.5:7b", temperature=0.1)
+llm = init_chat_model("ollama:qwen2.5:7b", temperature=0.2)
+
 
 # Simplify the Tavily search tool's input schema for a small local model
 @tool
