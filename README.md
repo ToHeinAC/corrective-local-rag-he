@@ -18,6 +18,9 @@ The thought behind running evaluators as part of your agent is to proactively at
 
 This repo also includes a version of the agent that omits the retrieval filtering step that relies purely on reflection and the `helpfulness` evaluator.
 
+This repo is based on the [LangGraph](https://langchain-ai.github.io/langgraph/) logic. 
+Modifications are made by ToHeinAC (https://github.com/ToHeinAC).
+
 ## Getting started
 
 You will need:
@@ -28,8 +31,8 @@ You will need:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/jacoblee93/openevals-local-rag.git
-cd openevals-local-rag
+git clone https://github.com/ToHeinAC/corrective-local-rag-he.git
+cd corrective-local-rag-he
 ```
 
 2. Set environment variables

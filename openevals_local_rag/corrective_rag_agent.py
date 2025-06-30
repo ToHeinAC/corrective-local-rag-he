@@ -13,7 +13,8 @@ from openevals.prompts import (
     RAG_HELPFULNESS_PROMPT,
 )
 
-model = init_chat_model("ollama:qwen2.5:7b", temperature=0.2)
+#model = init_chat_model("ollama:qwen2.5:7b", temperature=0.2)
+model = init_chat_model("ollama:llama3.2", temperature=0.2)
 
 current_date = datetime.now().strftime("%A, %B %d, %Y")
 
